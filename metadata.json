@@ -1,0 +1,6 @@
+{
+  "name": "Leftover Share",
+  "description": "A community food-donation listing board to share extra food, reduce waste, and help neighbors.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
