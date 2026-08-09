@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from "react";
 import {
   User,
   onAuthStateChanged,
@@ -7,8 +7,9 @@ import {
   signOut,
   updateProfile,
   signInWithPopup,
-} from 'firebase/auth';
-import { auth, googleProvider } from './firebase';
+} from "firebase/auth";
+import { auth, googleProvider, db } from "./firebase";
+import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
 
 interface AuthContextType {
   user: User | null;
@@ -28,7 +29,33 @@ const AuthContext = createContext<AuthContextType>({
   logout: async () => {},
 });
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+async function syncUserToFirestore(user: User) {
+  if (!user?.uid) return;
+
+  const userRef = doc(db, "users", user.uid);
+  try {
+    const existingDoc = await getDoc(userRef);
+    const userData: Record<string, any> = {
+      uid: user.uid,
+      email: user.email || null,
+      displayName: user.displayName || null,
+      photoURL: user.photoURL || null,
+      lastSeen: serverTimestamp(),
+    };
+
+    if (!existingDoc.exists()) {
+      userData.createdAt = serverTimestamp();
+    }
+
+    await setDoc(userRef, userData, { merge: true });
+  } catch (err) {
+    console.warn("Failed to sync user data to Firestore:", err);
+  }
+}
+
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -36,6 +63,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
       setLoading(false);
+      if (currentUser) {
+        syncUserToFirestore(currentUser);
+      }
     });
     return () => unsubscribe();
   }, []);
@@ -52,10 +82,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       });
       setUser({ ...res.user, displayName: name.trim() });
     }
+    if (res.user) {
+      await syncUserToFirestore(res.user);
+    }
   };
 
   const loginWithGoogle = async () => {
-    await signInWithPopup(auth, googleProvider);
+    const result = await signInWithPopup(auth, googleProvider);
+    if (result.user) {
+      await syncUserToFirestore(result.user);
+    }
   };
 
   const logout = async () => {

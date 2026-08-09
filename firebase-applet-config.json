@@ -1,12 +1,11 @@
 {
-  "projectId": "light-terminal-59v0l",
-  "appId": "1:1055822506741:web:31150c4a2e4a963071f3bc",
-  "apiKey": "AIzaSyB2L39T-AX2Io1uyIfntGkV1JTm50GJNjM",
-  "authDomain": "light-terminal-59v0l.firebaseapp.com",
-  "firestoreDatabaseId": "ai-studio-leftovershare-38f1666e-7832-4d58-8477-89872ccd6457",
-  "storageBucket": "light-terminal-59v0l.firebasestorage.app",
-  "messagingSenderId": "1055822506741",
-  "measurementId": "",
+  "projectId": "testing-website-578d5",
+  "appId": "1:379455551279:web:f569565605d25508fcd3da",
+  "apiKey": "AIzaSyCl-gID209t0Ikzyrz2IpEyRuHzN1KpXVg",
+  "authDomain": "testing-website-578d5.firebaseapp.com",
+  "storageBucket": "testing-website-578d5.firebasestorage.app",
+  "messagingSenderId": "379455551279",
+  "measurementId": "G-9T4FB6VFX1",
   "oAuthClientId": "1055822506741-59h9agm1r5ts5gq5o62218p3g49rcn2f.apps.googleusercontent.com",
   "recaptchaSiteKey": ""
 }
